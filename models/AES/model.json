@@ -8,7 +8,7 @@
             "wordLength": 32,
             "fractionLength": 28,
             "signed": true,
-            "numberOfChannels": 2
+            "numberOfChannels": 16
         },
         "audioOut": {
             "wordLength": 32,
@@ -20,28 +20,55 @@
 
     "devices": [
         {
-            "name": "noise_suppression",
+            "name": "delay_and_sum_beamformer",
             "registers": [
                 {
                     "dataType": {
-                        "fractionLength": 0,
-                        "signed": false,
-                        "type": "boolean",
-                        "wordLength": 1
+                        "fractionLength": 8,
+                        "signed": true,
+                        "type": "sfix16_en8",
+                        "wordLength": 16
                     },
-                    "defaultValue": 1,
-                    "name": "enable",
+                    "defaultValue": 0,
+                    "name": "azimuth",
                     "registerNumber": 0
                 },
                 {
                     "dataType": {
-                        "fractionLength": 15,
-                        "signed": false,
-                        "type": "ufix16_en15",
-                        "wordLength": 16 
+                        "fractionLength": 8,
+                        "signed": true,
+                        "type": "sfix16_en8",
+                        "wordLength": 16
                     },
-                    "defaultValue": 0.001,
-                    "name": "noise_variance",
+                    "defaultValue": 0,
+                    "name": "elevation",
+                    "registerNumber": 1
+                }
+            ]
+        },
+        {
+            "name": "simple_gain",
+            "registers": [
+                {
+                    "dataType": {
+                        "fractionLength": 13,
+                        "signed": false,
+                        "type": "ufix16_en13",
+                        "wordLength": 16
+                    },
+                    "defaultValue": 0,
+                    "name": "Left Gain",
+                    "registerNumber": 0
+                },
+                {
+                    "dataType": {
+                        "fractionLength": 13,
+                        "signed": false,
+                        "type": "ufix16_en13",
+                        "wordLength": 16
+                    },
+                    "defaultValue": 0,
+                    "name": "Right Gain",
                     "registerNumber": 1
                 }
             ]
@@ -69,6 +96,33 @@
                     },
                     "defaultValue": 0,
                     "name": "filter_select",
+                    "registerNumber": 1
+                }
+            ]
+        },
+        {
+            "name": "noise_suppression",
+            "registers": [
+                {
+                    "dataType": {
+                        "fractionLength": 0,
+                        "signed": false,
+                        "type": "boolean",
+                        "wordLength": 1
+                    },
+                    "defaultValue": 1,
+                    "name": "enable",
+                    "registerNumber": 0
+                },
+                {
+                    "dataType": {
+                        "fractionLength": 15,
+                        "signed": false,
+                        "type": "ufix16_en15",
+                        "wordLength": 16 
+                    },
+                    "defaultValue": 0.001,
+                    "name": "noise_variance",
                     "registerNumber": 1
                 }
             ]

@@ -35,10 +35,10 @@
                 },
                 {
                     "dataType": {
-                        "fractionLength": 15,
+                        "fractionLength": 23,
                         "signed": false,
                         "type": "ufix16_en15",
-                        "wordLength": 16 
+                        "wordLength": 24 
                     },
                     "defaultValue": 0.001,
                     "name": "noise_variance",
