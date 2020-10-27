@@ -45,10 +45,10 @@ c2_r = 1.0 - c1_r;
 %% Declare Freq Band Information
 
 % *** 2 Band Test Info *** %
-num_bands = 2;
+% num_bands = 2;
 
 % *** 8 Band Test Info *** %
-% num_bands = 8;
+num_bands = 8;
 
 %% Declare Attack and Release Time Constants for Each Frequency Band
 
@@ -126,15 +126,15 @@ end
 % Declaring Gain Vectors for each Frequency Band in dB
 fb1_gains = gtdata;
 fb2_gains = gtdata;
-% fb3_gains = gtdata;
-% fb4_gains = gtdata;
-% fb5_gains = gtdata;
-% fb6_gains = gtdata;
-% fb7_gains = gtdata;
-% fb8_gains = gtdata;
+fb3_gains = gtdata;
+fb4_gains = gtdata;
+fb5_gains = gtdata;
+fb6_gains = gtdata;
+fb7_gains = gtdata;
+fb8_gains = gtdata;
 
 % Concatenate dB Gain Vectors into Single Table
-gt_db = [fb1_gains fb2_gains];
+gt_db = [fb1_gains fb2_gains fb3_gains fb4_gains fb5_gains fb6_gains fb7_gains fb8_gains];
 
 % Map dB gains to Linear Factors
 gt = 10.^(gt_db./20);
@@ -144,9 +144,9 @@ dp_gt = gt';
 
 % Sizing DP Table to match Address Port Width of RAM Block
 numgainentries = table_length*num_bands;
-RAM_size = 8;
+RAM_size = 8 ; % Specify the RAM size for the positive frequencies, add one to account for the negative frequencies
 % RAM_size = ceil(log2(numgainentries));   % number of bits
-RAM_addresses = 2^RAM_size;
+RAM_addresses = 2^(RAM_size); % Add 1 to account for negative frequencies
 vy = dp_gt;
 for i = length(dp_gt)+1:RAM_addresses
     vy(i,1) = 0;
@@ -161,46 +161,67 @@ Lst = [ 55.*ones(25000*num_bands,1); 90.*ones(25000*num_bands,1); 55.*ones(25000
 level_in = (10.^(Lst./10))./2500000000;
 
 %% Declare Control Signals
+n_ar   = num_bands*2;
+n_shift = 8;
 
-% Band Number State Controller Signal
-for i = 1:num_bands:length(Lst)
-    band_num(i) = 1;
-    band_num(i+1) = 2;
-%     band_num(i+2) = 3;
-%     ...
-end
+ar_data_in   = (n_ar*ones(n_ar,1))-1;
+gain_data_in = (RAM_addresses*ones(RAM_addresses,1))-1;
 
-% Attack-Release Write Enable Signal
-write_en_ar = zeros(length(Lst),1);
+ar_data_in(1:n_ar) = (1:n_ar)-1;
+% ar_data_in(n_ar+1:end) = n_ar;
 
-% Attack Coefficient Write Data Signal
-write_data_a = zeros(length(Lst),1);
+gain_data_in(1:RAM_addresses) = (1:RAM_addresses)-1;
+% gain_data_in(RAM_addresses+1:end) = RAM_addresses;
 
-% Release Coefficient Write Data Signal
-write_data_r = zeros(length(Lst),1);
+% Shift the addresses into the correct location
+ar_data_in = bitshift(ar_data_in,n_shift);
+gain_data_in = bitshift(gain_data_in,n_shift);
 
-% Attack Coefficient Write Address Signal
-write_addr_a = zeros(length(Lst),1);
+% Add the coefficients to the variables
+ar_data_in(1:n_ar) = ar_data_in(1:n_ar) + ar_coeffs(1:n_ar);
+gain_data_in(1:RAM_addresses) = gain_data_in(1:RAM_addresses) + vy(1:RAM_addresses);
 
-% Release Coefficient Write Address Signal
-write_addr_r = ones(length(Lst),1);
 
-% Gain Table Write Enable Signal
-write_en_vy = zeros(length(Lst),1);
+% vy = zeros(size(vy));
+% ar_coeffs = zeros(size(ar_coeffs));
 
-% Gain Table Write Low Gain Data Signal
-write_data_vy_low = zeros(length(Lst),1);
-
-% Gain Table Write High Gain Data Signal
-write_data_vy_high = zeros(length(Lst),1);
-
-% Gain Table Write Low Gain Address Signal
-write_addr_vy_low = zeros(length(Lst),1);
-
-% Gain Table Write High Gain Address Signal
-write_addr_vy_high = ones(length(Lst),1);
 
 
 %% Declare Stop Time
 
 stop_time = length(Lst) - 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

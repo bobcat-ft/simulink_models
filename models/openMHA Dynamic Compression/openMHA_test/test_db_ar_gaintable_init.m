@@ -47,10 +47,10 @@ c2_r = 1.0 - c1_r;
 %% Declare Freq Band Information
 
 % *** 2 Band Test Info *** %
-num_bands = 2;
+% num_bands = 2;
 
 % *** 8 Band Test Info *** %
-% num_bands = 8;
+num_bands = 8;
 
 %% Declare Attack and Release Time Constants for Each Frequency Band
 
